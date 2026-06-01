@@ -619,6 +619,15 @@ const QUERY_FIELDS = [
         "type": "boolean",
         "example": "true",
         "options": true,
+        "global": true,
+    },
+    {
+        "name": "Source node",
+        "path": "node",
+        "type": "string",
+        "example": "mmb",
+        "options": true,
+        "global": true,
     },
     {
         "name": "Available MD analyses",
@@ -649,8 +658,12 @@ const QUERY_FIELDS = [
         "options": false
     },
 ];
-// Get the path of every field with options = true together
-const OPTIONS_QUERY_FIELDS = new Set(QUERY_FIELDS.filter(qf => qf.options).map(qf => qf.path));
+// Get the path of every field with "options = true" together
+// Get all fields for the monitor and all fields but the "global = true" for the loader
+const queryFieldsWithOptions = QUERY_FIELDS.filter(qf => qf.options);
+const localQueryFieldsWithOptions = queryFieldsWithOptions.filter(qf => qf.global !== true);
+const OPTIONS_QUERY_FIELDS = new Set(queryFieldsWithOptions.map(qf => qf.path));
+const LOCAL_OPTIONS_QUERY_FIELDS = new Set(localQueryFieldsWithOptions.map(qf => qf.path));
 
 // Set some constants
 module.exports = {
@@ -662,6 +675,7 @@ module.exports = {
     // Export query fields
     QUERY_FIELDS,
     OPTIONS_QUERY_FIELDS,
+    LOCAL_OPTIONS_QUERY_FIELDS,
     // Standard filenames
     STANDARD_TRAJECTORY_FILENAME: 'trajectory.bin',
     STANDARD_STRUCTURE_FILENAME: 'structure.pdb',
