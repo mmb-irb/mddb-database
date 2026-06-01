@@ -118,16 +118,13 @@ class Database {
         // Note that in the global API we target projects flagged as 'posited' instead of 'published'
         const productionTargetFlag = isGlobal ? 'posited' : 'published';
         const publishedFilter = Object.seal(isProduction ? { [productionTargetFlag]: true } : {});
-        // Set a filter for the global API to not return unposited projects
-        // Note that a non global API is not expected to have this field so it makes not sense applying the filter
-        const positedFilter = Object.seal(isGlobal ? { unposited: { $exists: false } } : {});
         // Set the collection filter according to the request URL
         // This filter is applied over the project metadata 'collections', nothing to do with mongo collections
         // Note that unknown hosts (e.g. 'localhost:8000') will get all simulations, with no filter
         const collectionFilter = Object.seal(hostCollection ? { 'metadata.COLLECTIONS': hostCollection } : {});
         // Set the starting base filter
         // This is a strict filter and it is applied even when a specific project is requested
-        const baseFilter = { ...publishedFilter, ...positedFilter, ...collectionFilter };
+        const baseFilter = { ...publishedFilter, ...collectionFilter };
         // If a specific project was requested then the base filter is returned as it is
         // Note that the filter above are mandatory for "privacy" reasons
         // In the sense that they are not to be skipped even if the requests asks for a specific accession
