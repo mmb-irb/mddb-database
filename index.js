@@ -9,6 +9,8 @@ const {
     LOCAL_COLLECTIONS,
     GLOBAL_COLLECTIONS,
     REFERENCES,
+    QUERY_FIELDS,
+    OPTIONS_QUERY_FIELDS,
     STANDARD_TRAJECTORY_FILENAME,
     STANDARD_STRUCTURE_FILENAME,
 } = require('./utils/constants');
@@ -40,6 +42,8 @@ class Database {
             this[collectionKey] = this.db.collection(collectionConfig.name);
         }
         // Save additional constants just to have them available more easily
+        this.QUERY_FIELDS = QUERY_FIELDS;
+        this.OPTIONS_QUERY_FIELDS = OPTIONS_QUERY_FIELDS;
         this.STANDARD_TRAJECTORY_FILENAME = STANDARD_TRAJECTORY_FILENAME;
         this.STANDARD_STRUCTURE_FILENAME = STANDARD_STRUCTURE_FILENAME;
         // Get the available references in a single string, which may be used for logs
