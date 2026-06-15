@@ -1,5 +1,9 @@
 {
   "name": "mddb-database",
   "version": "0.0.3",
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mongodb": "^4.17.2"
+  }
 }
