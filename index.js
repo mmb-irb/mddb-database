@@ -14,6 +14,8 @@ const {
     OPTIONS_QUERY_FIELDS,
     STANDARD_TRAJECTORY_FILENAME,
     STANDARD_STRUCTURE_FILENAME,
+    FIRST_ACCESSION_CODE,
+    ALPHANUMERIC,
 } = require('./utils/constants');
 
 // Import auxiliar functions
@@ -110,6 +112,21 @@ class Database {
                     await this[collectionKey].createIndex(index);
                 }
             }
+        }
+        // Make sure there is a counter document to track the last issued accession
+        const accessionsCounter = await this.counters.findOne({ accessions: true });
+        // If the counter does not exist yet then create it
+        if (!accessionsCounter) {
+            // Set the "zero" count for the counter
+            // Note that this is not zero since we want the first issued accession to star with 'A'
+            const zeroCount = parseInt(FIRST_ACCESSION_CODE, ALPHANUMERIC) - 1;
+            // Set the counter document
+            counter = { accessions: true, last: zeroCount };
+            // Insert the new document
+            logger.startLog(`🛠️  Creating new accession counter`);
+            const result = await this.counters.insertOne(counter);
+            if (!result.acknowledged) logger.failLog(`🛠️  Failed to create new accession counter`);
+            logger.successLog('🛠️  Created new accession counter');
         }
     };
 

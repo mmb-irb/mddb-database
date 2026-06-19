@@ -680,6 +680,14 @@ const localQueryFieldsWithOptions = queryFieldsWithOptions.filter(qf => qf.globa
 const OPTIONS_QUERY_FIELDS = new Set(queryFieldsWithOptions.map(qf => qf.path));
 const LOCAL_OPTIONS_QUERY_FIELDS = new Set(localQueryFieldsWithOptions.map(qf => qf.path));
 
+// Set constants related to issuing new accessions
+// Set the first accession code
+// Accession codes are alphanumeric and the first value is to be letter
+const FIRST_ACCESSION_CODE = 'A0001';
+const ACCESSION_CHARACTERS_LIMIT = FIRST_ACCESSION_CODE.length;
+// Set the alhpanumeric number of characters: 36 (10 numbers + 24 letters)
+const ALPHANUMERIC = 36;
+
 // Set some constants
 module.exports = {
     // Export mongo collections
@@ -695,4 +703,8 @@ module.exports = {
     // Standard filenames
     STANDARD_TRAJECTORY_FILENAME: 'trajectory.bin',
     STANDARD_STRUCTURE_FILENAME: 'structure.pdb',
+    // Export constants related to issuing new accessions
+    FIRST_ACCESSION_CODE,
+    ACCESSION_CHARACTERS_LIMIT,
+    ALPHANUMERIC,
 }
