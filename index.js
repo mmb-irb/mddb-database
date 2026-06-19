@@ -15,6 +15,7 @@ const {
     STANDARD_TRAJECTORY_FILENAME,
     STANDARD_STRUCTURE_FILENAME,
     FIRST_ACCESSION_CODE,
+    ACCESSION_CHARACTERS_LIMIT,
     ALPHANUMERIC,
 } = require('./utils/constants');
 
@@ -50,6 +51,9 @@ class Database {
         this.OPTIONS_QUERY_FIELDS = OPTIONS_QUERY_FIELDS;
         this.STANDARD_TRAJECTORY_FILENAME = STANDARD_TRAJECTORY_FILENAME;
         this.STANDARD_STRUCTURE_FILENAME = STANDARD_STRUCTURE_FILENAME;
+        this.FIRST_ACCESSION_CODE = FIRST_ACCESSION_CODE;
+        this.ACCESSION_CHARACTERS_LIMIT = ACCESSION_CHARACTERS_LIMIT;
+        this.ALPHANUMERIC = ALPHANUMERIC;
         // Get the available references in a single string, which may be used for logs
         this.REFERENCES = REFERENCES;
         this.AVAILABLE_REFERENCES = Object.keys(this.REFERENCES).join(', ');
