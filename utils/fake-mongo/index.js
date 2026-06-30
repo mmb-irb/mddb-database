@@ -46,18 +46,7 @@ const establishFakeConnection = async () => {
             console.log('A new instance of Mongo Memory Server will be created');
             // Note that .create() also starts the server (the constructor alone does not)
             const mongod = await MongoMemoryServer.create();
-            // If next line silently crashes try to type 'npm i mongodb-memory-server' in the terminal
-            // DANI: Esto para la documentación:
-            // Si después de instar mongodb memory server sigue fallando se puede activar el debug poniendo 'MONGOMS_DEBUG=1' en el archivo '.env'
-            // A mi funcionó hacer 'sudo apt-get install libcurl3' y luego 'sudo apt-get install libcurl4 php-curl'
-            // RUBEN:
-            // mongodb-memory-server 8.x relies on, while the default (older) binary links
-            // against libcrypto.so.1.1 which is absent on Ubuntu 24.04 (only OpenSSL 3).
-            // MongoDB 6.0.x built for ubuntu-22.04 satisfies both constraints.
-            // También se puede descargar directamente
-            // wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
-            // sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
-            // Si falla la descarga, buscar la nueva versión en: https://security.ubuntu.com/ubuntu/pool/main/o/openssl/
+            // To debug mongodb memory server, set 'MONGOMS_DEBUG=1' in the '.env' file
             client = await tryConnect(await mongod.getUri());
             if (!client) throw new Error('Failed to connect to MongoMemoryServer');
             client._mongod = mongod; // Save the mongod instance for later cleanup

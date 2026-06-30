@@ -33,8 +33,6 @@ const establishConnection = async () => {
                     password: process.env.DB_AUTH_PASSWORD,
                 },
                 authSource: process.env.DB_AUTHSOURCE,
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
             },
         );
         return client;
