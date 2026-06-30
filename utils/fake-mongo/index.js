@@ -9,6 +9,20 @@ const project2 = require('./project_2.json');
 const reference1 = require('./reference_1.json');
 const reference2 = require('./reference_2.json'); // entropies and epitopes removed for comodity
 
+// Attempts to connect to a MongoDB URI. Returns the client on success, null on failure.
+// Always closes the underlying topology on failure to avoid Jest open handle leaks.
+const tryConnect = async (connectionString, options = {}) => {
+    const tempClient = new mongodb.MongoClient(connectionString, { serverSelectionTimeoutMS: 2000, ...options });
+    try {
+        await tempClient.connect();
+        return tempClient;
+    } catch (error) {
+        console.error(`Failed to connect to MongoDB at ${connectionString}:`, error);
+        await tempClient.close(true).catch(() => {});
+        return null;
+    }
+};
+
 // Set up the fake server and return an available connection to this server
 // DANI: This has not been maintained in a while, expect problems when trying
 const establishFakeConnection = async () => {
@@ -16,34 +30,40 @@ const establishFakeConnection = async () => {
     try {
         // If there is a provided connection string, try to connect to it
         // WARNING: The string connection may be not valid
-        let connectionString;
-        try {
-            //connectionString = process.env.TEST_CONNECTION_STRING;
-            const host = process.env.DB_SERVER || '127.0.0.1';
-            const port = process.env.DB_PORT || '27017';
-            const name = process.env.DB_NAME || 'mdposit';
-            connectionString = `mongodb://${host}:${port}/${name}?`;
-            client = await mongodb.MongoClient.connect(connectionString, { useNewUrlParser: true });
-            connected = true;
+        const host = process.env.DB_SERVER || '127.0.0.1';
+        const port = process.env.DB_PORT || '27017';
+        const name = process.env.DB_NAME || 'mdposit';
+        const connectionString = `mongodb://${host}:${port}/${name}?`;
+        client = await tryConnect(connectionString);
+        if (client) {
             console.log('The provided connection string is valid: Connected to Mongo Memory Server');
-        } catch (error) {
-            console.error(
-            chalk.red('The provided connection string is not valid: There is no active Mongo Memory Server'));
+        } else {
+            console.error('The provided connection string is not valid: There is no active Mongo Memory Server');
         }
         // In case  there is no connection string or it is not valid...
         // Create a new server and get the connection string
-        if (!connected) {
+        if (!client) {
             console.log('A new instance of Mongo Memory Server will be created');
-            const mongod = new MongoMemoryServer();
-            // If tnext line silently crashes try to type 'npm i mongodb-memory-server' in the terminal
+            // Note that .create() also starts the server (the constructor alone does not)
+            const mongod = await MongoMemoryServer.create();
+            // If next line silently crashes try to type 'npm i mongodb-memory-server' in the terminal
             // DANI: Esto para la documentación:
             // Si después de instar mongodb memory server sigue fallando se puede activar el debug poniendo 'MONGOMS_DEBUG=1' en el archivo '.env'
             // A mi funcionó hacer 'sudo apt-get install libcurl3' y luego 'sudo apt-get install libcurl4 php-curl'
-            connectionString = await mongod.getUri();
-            client = await mongodb.MongoClient.connect(connectionString, { useNewUrlParser: true });
+            // RUBEN:
+            // mongodb-memory-server 8.x relies on, while the default (older) binary links
+            // against libcrypto.so.1.1 which is absent on Ubuntu 24.04 (only OpenSSL 3).
+            // MongoDB 6.0.x built for ubuntu-22.04 satisfies both constraints.
+            // También se puede descargar directamente
+            // wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+            // sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb
+            // Si falla la descarga, buscar la nueva versión en: https://security.ubuntu.com/ubuntu/pool/main/o/openssl/
+            client = await tryConnect(await mongod.getUri());
+            if (!client) throw new Error('Failed to connect to MongoMemoryServer');
+            client._mongod = mongod; // Save the mongod instance for later cleanup
         }
         //console.log(mongod.getInstanceInfo());
-        // Add data to the server to simulate the MoDEL structure
+        // Add data to the server to simulate the MDDB structure
         const db = client.db(process.env.DB_NAME);
         const projects = await db.createCollection('projects');
         await projects.insertOne(project1);
@@ -54,8 +74,7 @@ const establishFakeConnection = async () => {
         await db.createCollection('topologies');
         return client;
     } catch (error) {
-        console.error('fake mongodb connection error');
-        console.error(error);
+        console.error('fake-mongodb connection error: ', error);
         if (client && 'close' in client) client.close();
     }
 };
