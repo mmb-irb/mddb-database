@@ -2,7 +2,15 @@
   "name": "mddb-database",
   "version": "0.0.5",
   "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "mongodb": "^6.x.x",
+    "mongodb-memory-server": "^9.0.x"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
