@@ -26,7 +26,7 @@ const { areObjectsIdentical } = require('./utils/auxiliar');
 const countOptions = require('./utils/count-options');
 
 // GridFSBucket manages the saving of files bigger than 16 Mb, splitting them into 4 Mb fragments (chunks)
-const { GridFSBucket } = require('mongodb');
+const { GridFSBucket, ObjectId } = require('mongodb');
 
 // Set the database handler class
 class Database {
@@ -176,6 +176,8 @@ class Database {
         this.client.close();
         delete this;
     }
+    // Expose the ObjectId class to be used by other modules
+    static ObjectId = ObjectId
 }
 
 module.exports = {
