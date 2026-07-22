@@ -116,7 +116,10 @@ const countOptions = async (database, query, fields, shouldCountMds, useSavedCou
     const projectsData = await projectsCursor.toArray();
     // If projects data is empty then stop here
     // This mya happen if the database is new
-    if (projectsData.length === 0) return lastFixes(options);
+    if (projectsData.length === 0) return {
+        code: '404',
+        error: `The result of query "${JSON.stringify(query)}" is empty`
+    }
     // Set an object with project md counts
     const projectMdCounts = {};
     if (shouldCountMds) projectsData.forEach(project => {
