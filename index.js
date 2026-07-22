@@ -127,10 +127,10 @@ class Database {
             // Set the counter document
             const counter = { accessions: true, last: zeroCount };
             // Insert the new document
-            logger.startLog(`🛠️  Creating new accession counter`);
+            console.log.startLog(`🛠️  Creating new accession counter`);
             const result = await this.counters.insertOne(counter);
-            if (!result.acknowledged) logger.failLog(`🛠️  Failed to create new accession counter`);
-            logger.successLog('🛠️  Created new accession counter');
+            if (!result.acknowledged) console.log.failLog(`🛠️  Failed to create new accession counter`);
+            console.log.successLog('🛠️  Created new accession counter');
         }
     };
 
