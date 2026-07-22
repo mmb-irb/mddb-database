@@ -125,7 +125,7 @@ class Database {
             // Note that this is not zero since we want the first issued accession to star with 'A'
             const zeroCount = parseInt(FIRST_ACCESSION_CODE, ALPHANUMERIC) - 1;
             // Set the counter document
-            counter = { accessions: true, last: zeroCount };
+            const counter = { accessions: true, last: zeroCount };
             // Insert the new document
             logger.startLog(`🛠️  Creating new accession counter`);
             const result = await this.counters.insertOne(counter);
