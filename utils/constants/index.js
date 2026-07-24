@@ -71,10 +71,6 @@ const GLOBAL_COLLECTIONS = {
         indexes: [{ posited: 1 }, { accession: 1 }, { node: 1, local: 1 }],
         documentNames: { singular: 'project', plural: 'projects' },
     },
-    topologies: {
-        name: 'global.topologies',
-        documentNames: { singular: 'topology', plural: 'topologies' },
-    },
     uniprot_refs: {
         name: 'global.references',
         indexes: [{ uniprot: 1 }],
@@ -660,7 +656,7 @@ const QUERY_FIELDS = [
         name: "Number of MDs",
         path: "mdcount",
         type: "int",
-        example: "any integer number",
+        example: "any integer number",topology
         options: false
     },
     {
