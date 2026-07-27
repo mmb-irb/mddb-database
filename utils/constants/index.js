@@ -656,7 +656,7 @@ const QUERY_FIELDS = [
         name: "Number of MDs",
         path: "mdcount",
         type: "int",
-        example: "any integer number",topology
+        example: "any integer number",
         options: false
     },
     {
