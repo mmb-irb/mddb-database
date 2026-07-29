@@ -7,27 +7,35 @@
 const LOCAL_COLLECTIONS = {
     projects: {
         name: 'projects',
-        indexes: [{ published: 1 }],
+        indexes: [
+            { accession: 1 },
+            { booked: 1, deleted: 1 },
+            { published: 1, booked: 1, deleted: 1 },
+        ],
         documentNames: { singular: 'project', plural: 'projects' },
         parent: null,
     },
     uniprot_refs: {
         name: 'references',
+        indexes: [{ uniprot: 1 }],
         documentNames: { singular: 'reference', plural: 'references' },
         parent: { collectionKey: 'projects', referenceField: 'metadata.REFERENCES', localField: 'uniprot' },
     },
     inchikey_refs: {
         name: 'inchikey_refs',
+        indexes: [{ inchikey: 1 }],
         documentNames: { singular: 'inchikey', plural: 'inchikeys' },
         parent: { collectionKey: 'projects', referenceField: 'metadata.INCHIKEYS', localField: 'inchikey' },
     },
     pdb_refs: {
         name: 'pdb_refs',
+        indexes: [{ id: 1 }],
         documentNames: { singular: 'PDB', plural: 'PDBs' },
         parent: { collectionKey: 'projects', referenceField: 'metadata.PDBIDS', localField: 'id' },
     },
     chain_refs: {
         name: 'chain_refs',
+        indexes: [{ sequence: 1 }],
         documentNames: { singular: 'chain', plural: 'chains' },
         parent: { collectionKey: 'projects', referenceField: 'metadata.PROTSEQ', localField: 'sequence' },
     },
@@ -68,7 +76,12 @@ const LOCAL_COLLECTIONS = {
 const GLOBAL_COLLECTIONS = {
     projects: {
         name: 'global.projects',
-        indexes: [{ posited: 1 }, { accession: 1 }, { node: 1, local: 1 }],
+        indexes: [
+            { accession: 1 },
+            { node: 1, local: 1 },
+            { booked: 1, deleted: 1 },
+            { posited: 1, booked: 1, deleted: 1 },
+        ],
         documentNames: { singular: 'project', plural: 'projects' },
     },
     uniprot_refs: {
@@ -88,6 +101,7 @@ const GLOBAL_COLLECTIONS = {
     },
     chain_refs: {
         name: 'global.chain_refs',
+        indexes: [{ sequence: 1 }],
         documentNames: { singular: 'chain', plural: 'chains' },
     },
     collection_refs: {
@@ -104,6 +118,7 @@ const GLOBAL_COLLECTIONS = {
     },
     pointers: {
         name: 'pointers',
+        indexes: [{ 'proteins.uniprot': 1 }, { 'pdbs.id': 1 }],
         documentNames: { singular: 'pointers', plural: 'pointers' }
     }
 };
