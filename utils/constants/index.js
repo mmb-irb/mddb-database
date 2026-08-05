@@ -681,6 +681,13 @@ const QUERY_FIELDS = [
         example: "ISODate('2026-02-04T10:57:00.988Z')",
         options: false
     },
+    {
+        name: "Creation date",
+        path: "creationDate",
+        type: "date",
+        example: "ISODate('2026-02-04T10:57:00.988Z')",
+        options: false
+    },
 ];
 // Store the same query field configurations in a object where paths are the keys for comodity
 const PATH_QUERY_FIELDS = Object.fromEntries(QUERY_FIELDS.map(q => [q.path, q]));
