@@ -52,7 +52,7 @@ const LOCAL_COLLECTIONS = {
     },
     files: {
         name: 'fs.files',
-        indexes: [{ 'metadata.project': 1 }],
+        indexes: [{ 'metadata.project': 1 }, { 'metadata.reftype': 1, 'metadata.refid': 1 }],
         documentNames: { singular: 'file', plural: 'files' },
         parent: { collectionKey: 'projects', referenceField: '_id', localField: 'metadata.project' },
     },
