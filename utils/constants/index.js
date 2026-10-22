@@ -721,6 +721,7 @@ module.exports = {
     // Standard filenames
     STANDARD_TRAJECTORY_FILENAME: 'trajectory.bin',
     STANDARD_STRUCTURE_FILENAME: 'structure.pdb',
+    STANDARD_BOX_FILENAME: 'box.bin',
     // Export constants related to issuing new accessions
     FIRST_ACCESSION_CODE,
     ACCESSION_CHARACTERS_LIMIT,
