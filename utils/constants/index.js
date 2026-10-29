@@ -159,6 +159,7 @@ const REFERENCES = {
 // Note that other fields not stated here may be queried anyway
 // - name - Pretty name used for logs
 // - path - Actual path in the database. It may contain the 'references' header which means data is not in the project
+// - description - What the field holds, its units and which projects lack it, for the API docs and other clients
 // - type - string, int, float, boolean or date
 //   All these values tirgger internal logic to better handled queries for every type of data.
 // - example - Also for the logs
@@ -173,6 +174,7 @@ const QUERY_FIELDS = [
     {
         name: "Keywords",
         path: "metadata.SYSKEYS",
+        description: "System keywords from the workflow residue classification: protein, dna, rna, lipid, carbohydrate, ligand, solvent, counter ion, non-counter ion and other; one of them with \"only\" (e.g. protein only) when it is the single class besides solvent and ions; membrane and nucleosome. Newer workflows also add multimerism (e.g. homodimer, double strand) and resolution (all-atom (aa), united atom (ua), coarse grained (cg)). Missing in projects from older workflows.",
         type: "string",
         example: "protein",
         options: true,
@@ -180,6 +182,7 @@ const QUERY_FIELDS = [
     {
         name: "Interactions",
         path: "metadata.INTERACTIONS.type",
+        description: "Type of each interaction analyzed: the residue classes of its two agents, sorted alphabetically and joined by a dash (e.g. dna-protein, other-protein), except protein-ligand.",
         type: "string",
         example: "protein-protein",
         options: true,
@@ -187,6 +190,7 @@ const QUERY_FIELDS = [
     {
         name: "System atom count",
         path: "metadata.SYSTATS",
+        description: "Number of atoms in the system.",
         type: "int",
         example: "any integer number",
         options: false
@@ -194,6 +198,7 @@ const QUERY_FIELDS = [
     {
         name: "System residue count",
         path: "metadata.SYSTRES",
+        description: "Number of residues in the system.",
         type: "int",
         example: "any integer number",
         options: false
@@ -201,6 +206,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein atom count",
         path: "metadata.PROTATS",
+        description: "Number of protein atoms.",
         type: "int",
         example: "any integer number",
         options: false
@@ -208,6 +214,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein residue count",
         path: "metadata.PROTRES",
+        description: "Number of protein residues.",
         type: "int",
         example: "any integer number",
         options: false
@@ -215,6 +222,7 @@ const QUERY_FIELDS = [
     {
         name: "DNA atom count",
         path: "metadata.DNAATS",
+        description: "Number of DNA atoms. Some projects from older workflows count all nucleic acids in NUCLATS instead.",
         type: "int",
         example: "any integer number",
         options: false
@@ -222,6 +230,7 @@ const QUERY_FIELDS = [
     {
         name: "DNA residue count",
         path: "metadata.DNARES",
+        description: "Number of DNA residues. Some projects from older workflows count all nucleic acids in NUCLRES instead.",
         type: "int",
         example: "any integer number",
         options: false
@@ -229,6 +238,7 @@ const QUERY_FIELDS = [
     {
         name: "RNA atom count",
         path: "metadata.RNAATS",
+        description: "Number of RNA atoms. Some projects from older workflows count all nucleic acids in NUCLATS instead.",
         type: "int",
         example: "any integer number",
         options: false
@@ -236,6 +246,7 @@ const QUERY_FIELDS = [
     {
         name: "RNA residue count",
         path: "metadata.RNARES",
+        description: "Number of RNA residues. Some projects from older workflows count all nucleic acids in NUCLRES instead.",
         type: "int",
         example: "any integer number",
         options: false
@@ -243,6 +254,7 @@ const QUERY_FIELDS = [
     {
         name: "Lipid atom count",
         path: "metadata.LIPIATS",
+        description: "Number of lipid atoms.",
         type: "int",
         example: "any integer number",
         options: false
@@ -250,6 +262,7 @@ const QUERY_FIELDS = [
     {
         name: "Lipid residue count",
         path: "metadata.LIPIRES",
+        description: "Number of lipid residues. Some force fields split each lipid in several residues.",
         type: "int",
         example: "any integer number",
         options: false
@@ -257,6 +270,7 @@ const QUERY_FIELDS = [
     {
         name: "Carbohydrates atom count",
         path: "metadata.CARBATS",
+        description: "Number of carbohydrate atoms.",
         type: "int",
         example: "any integer number",
         options: false
@@ -264,6 +278,7 @@ const QUERY_FIELDS = [
     {
         name: "Carbohydrates residue count",
         path: "metadata.CARBRES",
+        description: "Number of carbohydrate residues.",
         type: "int",
         example: "any integer number",
         options: false
@@ -271,6 +286,7 @@ const QUERY_FIELDS = [
     {
         name: "Solvent atom count",
         path: "metadata.SOLVATS",
+        description: "Number of solvent (water) atoms.",
         type: "int",
         example: "any integer number",
         options: false
@@ -278,6 +294,7 @@ const QUERY_FIELDS = [
     {
         name: "Solvent residue count",
         path: "metadata.SOLVRES",
+        description: "Number of solvent (water) residues, i.e. water molecules.",
         type: "int",
         example: "any integer number",
         options: false
@@ -285,6 +302,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter cation count",
         path: "metadata.COUNCAT",
+        description: "Number of counter cations (e.g. Na+, K+).",
         type: "int",
         example: "any integer number",
         options: false
@@ -292,6 +310,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter anion count",
         path: "metadata.COUNANI",
+        description: "Number of counter anions (e.g. Cl-).",
         type: "int",
         example: "any integer number",
         options: false
@@ -299,6 +318,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter ion count",
         path: "metadata.COUNION",
+        description: "Number of counter ions: counter cations plus counter anions.",
         type: "int",
         example: "any integer number",
         options: false
@@ -306,6 +326,7 @@ const QUERY_FIELDS = [
     {
         name: "Non-counter ion count",
         path: "metadata.NOCNION",
+        description: "Number of ions which are not counter ions, such as structural Zn2+ or Mg2+. Missing in projects from older workflows.",
         type: "int",
         example: "any integer number",
         options: false
@@ -313,6 +334,7 @@ const QUERY_FIELDS = [
     {
         name: "Other atom count",
         path: "metadata.OTHRATS",
+        description: "Number of atoms in no other class, such as those of ligands and cofactors. Missing in projects from older workflows.",
         type: "int",
         example: "any integer number",
         options: false
@@ -320,6 +342,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein sequence",
         path: "metadata.PROTSEQ",
+        description: "Protein chain sequences in one-letter code, one per distinct sequence, in order of appearance. A regular expression ($regex) finds a sequence motif.",
         type: "string",
         example: "VNLTTRT",
         options: false
@@ -327,6 +350,7 @@ const QUERY_FIELDS = [
     {
         name: "Nucleic acid sequences",
         path: "metadata.NUCLSEQ",
+        description: "DNA and RNA chain sequences in one-letter code, one per distinct sequence, in order of appearance.",
         type: "string",
         example: "CGCGAATTCGCG",
         options: false
@@ -334,6 +358,7 @@ const QUERY_FIELDS = [
     {
         name: "Domains",
         path: "metadata.DOMAINS",
+        description: "Names of the UniProt domains and regions which the simulated protein residues overlap.",
         type: "string",
         example: "Receptor-binding domain (RBD)",
         options: true
@@ -341,6 +366,7 @@ const QUERY_FIELDS = [
     {
         name: "Post translational modifications",
         path: "metadata.PTM",
+        description: "Post-translational modifications found in the structure, e.g. Acetylation, Glycosilation or Amidation.",
         type: "string",
         example: "Glycosylation",
         options: true
@@ -348,6 +374,7 @@ const QUERY_FIELDS = [
     {
         name: "Multimeric form",
         path: "metadata.MULTIMERIC",
+        description: "Multimeric state of the protein (monomer, dimer, trimer...). Only in projects from older workflows: newer ones add it to the system keywords (e.g. homodimer).",
         type: "string",
         example: "Dimer",
         options: true,
@@ -355,6 +382,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB id",
         path: "metadata.PDBIDS",
+        description: "PDB ids the system was built from. Obsolete entries are replaced by the ones that superseded them.",
         type: "string",
         example: "12CA",
         options: true,
@@ -362,12 +390,14 @@ const QUERY_FIELDS = [
     {
         name: "PDB title",
         path: "references.pdbs.title",
+        description: "Title of the PDB entries the system was built from.",
         type: "string",
         example: "kinetics of human carbonic anhydrase",
     },
     {
         name: "PDB classification",
         path: "references.pdbs.class",
+        description: "PDB classification of the entries the system was built from.",
         type: "string",
         example: "acid",
         options: true,
@@ -375,6 +405,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB authors",
         path: "references.pdbs.authors",
+        description: "Authors of the PDB entries the system was built from, written as \"Wang, X.\".",
         type: "string",
         example: "CHRISTIANSON",
         options: true,
@@ -382,6 +413,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB organism",
         path: "references.pdbs.organisms",
+        description: "Source organisms of the PDB entries the system was built from.",
         type: "string",
         example: "Homo sapiens",
         options: true,
@@ -389,6 +421,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB method",
         path: "references.pdbs.method",
+        description: "Experimental method of the PDB entries the system was built from, e.g. X-RAY DIFFRACTION or ELECTRON MICROSCOPY.",
         type: "string",
         example: "X-RAY DIFFRACTION",
         options: true,
@@ -396,12 +429,14 @@ const QUERY_FIELDS = [
     {
         name: "PDB resolution",
         path: "references.pdbs.resolution",
+        description: "Resolution of the PDB entries the system was built from. No workflow version stores it yet, so it matches no project.",
         type: "float",
         example: "2.4",
     },
     {
         name: "Ligand name",
         path: "references.inchikeys.ligand.name",
+        description: "Name of the ligands and lipids in the system. Older InChI key references keep ligand data under pubchem instead, so they never match.",
         type: "string",
         example: "aclidinium",
         options: true,
@@ -409,6 +444,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand PubChem id",
         path: "references.inchikeys.ligand.pubchem",
+        description: "PubChem compound id (CID) of the ligands and lipids in the system. Older InChI key references keep ligand data under pubchem instead, so they never match.",
         type: "string",
         example: "1986",
         options: true,
@@ -416,6 +452,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand DrugBank id",
         path: "references.inchikeys.ligand.drugbank",
+        description: "DrugBank id of the ligands in the system. Older InChI key references keep ligand data under pubchem instead, so they never match.",
         type: "string",
         example: "DB09330",
         options: true,
@@ -423,6 +460,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand ChEMBL id",
         path: "references.inchikeys.ligand.chembl",
+        description: "ChEMBL id of the ligands in the system. Older InChI key references keep ligand data under pubchem instead, so they never match.",
         type: "string",
         example: "CHEMBL14830",
         options: true,
@@ -430,6 +468,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand PDB code",
         path: "references.inchikeys.ligand.pdbid",
+        description: "PDB chemical component code of the ligands in the system. Older InChI key references keep ligand data under pubchem instead, so they never match.",
         type: "string",
         example: "HEM",
         options: true,
@@ -437,6 +476,7 @@ const QUERY_FIELDS = [
     {
         name: "InChI key",
         path: "metadata.INCHIKEYS",
+        description: "InChI keys of the ligands, lipids and other small molecules identified in the system. Missing in projects from older workflows.",
         type: "string",
         example: "HVYWMOMLDIMFJA-DPAQBDIFSA-N",
         options: true,
@@ -444,6 +484,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot id",
         path: "metadata.REFERENCES",
+        description: "UniProt accessions of the proteins in the system. noref marks protein chains with no UniProt entry (e.g. designed ones) and notfound those whose entry was not found.",
         type: "string",
         example: "Q9BYF1",
         options: true
@@ -451,6 +492,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot organism",
         path: "references.proteins.organism",
+        description: "Organism of the UniProt proteins in the system.",
         type: "string",
         example: "Homo sapiens",
         options: true
@@ -458,6 +500,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot gene",
         path: "references.proteins.gene",
+        description: "Gene name of the UniProt proteins in the system.",
         type: "string",
         example: "ACE2",
         options: true
@@ -465,6 +508,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot name",
         path: "references.proteins.name",
+        description: "Name of the UniProt proteins in the system.",
         type: "string",
         example: "Angiotensin-converting enzyme 2",
         options: true
@@ -472,6 +516,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot protein function",
         path: "references.proteins.functions",
+        description: "Gene Ontology molecular functions of the UniProt proteins in the system.",
         type: "string",
         example: "RNA binding",
         options: true
@@ -479,6 +524,7 @@ const QUERY_FIELDS = [
     {
         name: "Program",
         path: "metadata.PROGRAM",
+        description: "MD program, as the uploader wrote it, so spellings vary.",
         type: "string",
         example: "Gromacs",
         options: true,
@@ -486,6 +532,7 @@ const QUERY_FIELDS = [
     {
         name: "Type",
         path: "metadata.TYPE",
+        description: "trajectory (frames along time) or ensemble (independent conformations).",
         type: "string",
         example: "ensemble",
         options: true,
@@ -493,6 +540,7 @@ const QUERY_FIELDS = [
     {
         name: "MD method",
         path: "metadata.METHOD",
+        description: "MD method, as the uploader wrote it, e.g. Classical MD, Umbrella sampling or Constant pH MD.",
         type: "string",
         example: "Classical MD",
         options: true,
@@ -500,6 +548,7 @@ const QUERY_FIELDS = [
     {
         name: "Timestep (fs)",
         path: "metadata.TIMESTEP",
+        description: "Integration timestep in femtoseconds (fs).",
         type: "float",
         example: "2",
         options: true,
@@ -507,6 +556,7 @@ const QUERY_FIELDS = [
     {
         name: "Force field",
         path: "metadata.FF",
+        description: "Force fields, as the uploader wrote them, so names vary between projects.",
         type: "string",
         example: "CHARMM36m",
         options: true,
@@ -514,6 +564,7 @@ const QUERY_FIELDS = [
     {
         name: "Water type",
         path: "metadata.WAT",
+        description: "Water model, e.g. TIP3P, OPC or SPCE.",
         type: "string",
         example: "TIP3",
         options: true,
@@ -521,6 +572,7 @@ const QUERY_FIELDS = [
     {
         name: "Temperature (K)",
         path: "metadata.TEMP",
+        description: "Temperature in Kelvin (K).",
         type: "float",
         example: "300",
         options: true,
@@ -528,6 +580,7 @@ const QUERY_FIELDS = [
     {
         name: "Ensemble",
         path: "metadata.ENSEMBLE",
+        description: "Thermodynamic ensemble, e.g. NVT or NPT.",
         type: "string",
         example: "NPT",
         options: true,
@@ -535,6 +588,7 @@ const QUERY_FIELDS = [
     {
         name: "Boxtype",
         path: "metadata.BOXTYPE",
+        description: "Shape of the simulation box. Older uploads typed it by hand, so spellings vary (cubic, Cubic...).",
         type: "string",
         example: "Triclinic",
         options: true,
@@ -542,6 +596,7 @@ const QUERY_FIELDS = [
     {
         name: "Framestep (ns)",
         path: "metadata.FRAMESTEP",
+        description: "Time between consecutive frames in nanoseconds (ns).",
         type: "float",
         example: "any number",
         options: false
@@ -549,6 +604,7 @@ const QUERY_FIELDS = [
     {
         name: "Number of frames",
         path: "mds.frames",
+        description: "Number of frames of each MD.",
         type: "int",
         example: "any integer number",
         options: false
@@ -556,6 +612,7 @@ const QUERY_FIELDS = [
     {
         name: "Chain names",
         path: "metadata.CHNAME",
+        description: "Distinct chain names in the structure. Missing in projects from older workflows.",
         type: "string",
         example: "M",
         options: true,
@@ -563,6 +620,7 @@ const QUERY_FIELDS = [
     {
         name: "Residue names",
         path: "metadata.RSNAME",
+        description: "Distinct residue names in the structure. Missing in projects from older workflows.",
         type: "string",
         example: "NME",
         options: true,
@@ -570,6 +628,7 @@ const QUERY_FIELDS = [
     {
         name: "Atom names",
         path: "metadata.ATNAME",
+        description: "Distinct atom names in the structure. Missing in projects from older workflows.",
         type: "string",
         example: "OT1",
         options: true,
@@ -577,6 +636,7 @@ const QUERY_FIELDS = [
     {
         name: "Atom elements",
         path: "metadata.ATELEM",
+        description: "Distinct chemical elements in the structure. Missing in projects from older workflows.",
         type: "string",
         example: "Zn",
         options: true,
@@ -584,6 +644,7 @@ const QUERY_FIELDS = [
     {
         name: "Name",
         path: "metadata.NAME",
+        description: "Project title.",
         type: "string",
         example: "spike opening ...",
         options: false
@@ -591,6 +652,7 @@ const QUERY_FIELDS = [
     {
         name: "Description",
         path: "metadata.DESCRIPTION",
+        description: "Free-text description of the project.",
         type: "string",
         example: "this simulation ...",
         options: false
@@ -598,6 +660,7 @@ const QUERY_FIELDS = [
     {
         name: "Authors",
         path: "metadata.AUTHORS",
+        description: "Authors of the simulations.",
         type: "string",
         example: "Modesto Orozco",
         options: true,
@@ -605,6 +668,7 @@ const QUERY_FIELDS = [
     {
         name: "Groups",
         path: "metadata.GROUPS",
+        description: "Research groups or institutions behind the simulations.",
         type: "string",
         example: "IRB Barcelona, Orozco lab",
         options: true,
@@ -612,6 +676,7 @@ const QUERY_FIELDS = [
     {
         name: "Citation",
         path: "metadata.CITATION",
+        description: "Publication to cite for the simulations, usually a DOI.",
         type: "string",
         example: "institute of ...",
         options: false
@@ -619,6 +684,7 @@ const QUERY_FIELDS = [
     {
         name: "Collections",
         path: "metadata.COLLECTIONS",
+        description: "Ids of the collections the project belongs to, described by the collection references.",
         type: "string",
         example: "cv19",
         options: true,
@@ -626,6 +692,7 @@ const QUERY_FIELDS = [
     {
         name: "Published",
         path: "published",
+        description: "Whether the node shows the project publicly.",
         type: "boolean",
         example: "true",
         options: true,
@@ -633,6 +700,7 @@ const QUERY_FIELDS = [
     {
         name: "Posited",
         path: "posited",
+        description: "Whether the global database shows the project publicly. Global API only.",
         type: "boolean",
         example: "true",
         options: true,
@@ -641,6 +709,7 @@ const QUERY_FIELDS = [
     {
         name: "Source node",
         path: "node",
+        description: "Alias of the node which stores the project. Global API only.",
         type: "string",
         example: "mmb",
         options: true,
@@ -649,6 +718,7 @@ const QUERY_FIELDS = [
     {
         name: "Available MD analyses",
         path: "mds.analyses.name",
+        description: "Names of the analyses available for each MD.",
         type: "string",
         example: "pca",
         options: true,
@@ -656,6 +726,7 @@ const QUERY_FIELDS = [
     {
         name: "Project files",
         path: "files.name",
+        description: "Names of the files stored for the whole project.",
         type: "string",
         example: "topology.tpr",
         options: true
@@ -663,6 +734,7 @@ const QUERY_FIELDS = [
     {
         name: "MD files",
         path: "mds.files.name",
+        description: "Names of the files stored for each MD.",
         type: "string",
         example: "pocket_10.pdb",
         options: true
@@ -670,6 +742,7 @@ const QUERY_FIELDS = [
     {
         name: "Number of MDs",
         path: "mdcount",
+        description: "Number of MDs (replicas) in the project.",
         type: "int",
         example: "any integer number",
         options: false
@@ -677,15 +750,17 @@ const QUERY_FIELDS = [
     {
         name: "Last update date",
         path: "updateDate",
+        description: "When the project was last updated. The API takes ISO date strings.",
         type: "date",
-        example: "ISODate('2026-02-04T10:57:00.988Z')",
+        example: "2026-02-04T10:57:00.988Z",
         options: false
     },
     {
         name: "Creation date",
         path: "creationDate",
+        description: "When the project was created. The API takes ISO date strings.",
         type: "date",
-        example: "ISODate('2026-02-04T10:57:00.988Z')",
+        example: "2026-02-04T10:57:00.988Z",
         options: false
     },
 ];
