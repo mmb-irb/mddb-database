@@ -765,6 +765,86 @@ const QUERY_FIELDS = [
         example: "ISODate('2026-02-04T10:57:00.988Z')",
         options: false
     },
+    {
+        name: "Simulation time (ns)",
+        path: "mds.time",
+        alias: "mdTime",
+        type: "float",
+        example: "any number",
+        options: false
+    },
+    {
+        name: "Mean global RMSD (Å)",
+        path: "mds.rmsd_mean",
+        alias: "rmsdMean",
+        type: "float",
+        example: "any number",
+        options: false
+    },
+    {
+        name: "Standard deviation of global RMSD (Å)",
+        path: "mds.rmsd_stdv",
+        alias: "rmsdStdv",
+        type: "float",
+        example: "any number",
+        options: false
+    },
+    {
+        name: "Maximum global RMSD (Å)",
+        path: "mds.rmsd_max",
+        alias: "rmsdMax",
+        type: "float",
+        example: "any number",
+        options: false
+    },
+    {
+        name: "Collection name",
+        path: "references.collections.name",
+        alias: "collectionName",
+        type: "string",
+        example: "BioExcel COVID-19",
+        options: false
+    },
+    {
+        name: "Covid-19 unit",
+        path: "metadata.CV19_UNIT",
+        alias: "cv19Unit",
+        type: "string",
+        example: "ACE2",
+        options: false
+    },
+    {
+        name: "Covid-19 variant",
+        path: "metadata.CV19_VARIANT",
+        alias: "cv19Variant",
+        type: "string",
+        example: "Delta",
+        options: false
+    },
+    {
+        name: "Presence of antibodies (Covid-19)",
+        path: "metadata.CV19_ABS",
+        alias: "cv19Antibodies",
+        type: "boolean",
+        example: "true",
+        options: false
+    },
+    {
+        name: "Presence of nanobodies (Covid-19)",
+        path: "metadata.CV19_NANOBS",
+        alias: "cv19Nanobodies",
+        type: "boolean",
+        example: "true",
+        options: false
+    },
+    {
+        name: "Spike starting conformation (Covid-19)",
+        path: "metadata.CV19_STARTCONF",
+        alias: "cv19StartConformation",
+        type: "string",
+        example: "open",
+        options: false
+    },
 ];
 // Store the same query field configurations in a object where paths are the keys for comodity
 const PATH_QUERY_FIELDS = Object.fromEntries(QUERY_FIELDS.map(q => [q.path, q]));
