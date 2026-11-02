@@ -726,6 +726,22 @@ const QUERY_FIELDS = [
         options: true,
     },
     {
+        name: "Project warnings",
+        path: "metadata.WARNINGS.tag",
+        alias: "warning",
+        type: "string",
+        example: "stabonds",
+        options: true,
+    },
+    {
+        name: "MD warnings",
+        path: "mds.warnings.tag",
+        alias: "mdWarning",
+        type: "string",
+        example: "stabonds",
+        options: true,
+    },
+    {
         name: "Project files",
         path: "files.name",
         alias: "file",
