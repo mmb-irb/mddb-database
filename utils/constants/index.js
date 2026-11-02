@@ -159,6 +159,9 @@ const REFERENCES = {
 // Note that other fields not stated here may be queried anyway
 // - name - Pretty name used for logs
 // - path - Actual path in the database. It may contain the 'references' header which means data is not in the project
+// - alias - Short and human friendly name which may be used instead of the path (e.g. in the API filters)
+//   Aliases are written in camel case and they stand for the same field everywhere
+//   Aliases must be unique and they must not match any actual path other than their own
 // - type - string, int, float, boolean or date
 //   All these values tirgger internal logic to better handled queries for every type of data.
 // - example - Also for the logs
@@ -173,6 +176,7 @@ const QUERY_FIELDS = [
     {
         name: "Keywords",
         path: "metadata.SYSKEYS",
+        alias: "keyword",
         type: "string",
         example: "protein",
         options: true,
@@ -180,6 +184,7 @@ const QUERY_FIELDS = [
     {
         name: "Interactions",
         path: "metadata.INTERACTIONS.type",
+        alias: "interaction",
         type: "string",
         example: "protein-protein",
         options: true,
@@ -187,6 +192,7 @@ const QUERY_FIELDS = [
     {
         name: "System atom count",
         path: "metadata.SYSTATS",
+        alias: "systemAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -194,6 +200,7 @@ const QUERY_FIELDS = [
     {
         name: "System residue count",
         path: "metadata.SYSTRES",
+        alias: "systemResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -201,6 +208,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein atom count",
         path: "metadata.PROTATS",
+        alias: "proteinAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -208,6 +216,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein residue count",
         path: "metadata.PROTRES",
+        alias: "proteinResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -215,6 +224,7 @@ const QUERY_FIELDS = [
     {
         name: "DNA atom count",
         path: "metadata.DNAATS",
+        alias: "dnaAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -222,6 +232,7 @@ const QUERY_FIELDS = [
     {
         name: "DNA residue count",
         path: "metadata.DNARES",
+        alias: "dnaResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -229,6 +240,7 @@ const QUERY_FIELDS = [
     {
         name: "RNA atom count",
         path: "metadata.RNAATS",
+        alias: "rnaAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -236,6 +248,7 @@ const QUERY_FIELDS = [
     {
         name: "RNA residue count",
         path: "metadata.RNARES",
+        alias: "rnaResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -243,6 +256,7 @@ const QUERY_FIELDS = [
     {
         name: "Lipid atom count",
         path: "metadata.LIPIATS",
+        alias: "lipidAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -250,6 +264,7 @@ const QUERY_FIELDS = [
     {
         name: "Lipid residue count",
         path: "metadata.LIPIRES",
+        alias: "lipidResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -257,6 +272,7 @@ const QUERY_FIELDS = [
     {
         name: "Carbohydrates atom count",
         path: "metadata.CARBATS",
+        alias: "carbohydrateAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -264,6 +280,7 @@ const QUERY_FIELDS = [
     {
         name: "Carbohydrates residue count",
         path: "metadata.CARBRES",
+        alias: "carbohydrateResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -271,6 +288,7 @@ const QUERY_FIELDS = [
     {
         name: "Solvent atom count",
         path: "metadata.SOLVATS",
+        alias: "solventAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -278,6 +296,7 @@ const QUERY_FIELDS = [
     {
         name: "Solvent residue count",
         path: "metadata.SOLVRES",
+        alias: "solventResidues",
         type: "int",
         example: "any integer number",
         options: false
@@ -285,6 +304,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter cation count",
         path: "metadata.COUNCAT",
+        alias: "counterCations",
         type: "int",
         example: "any integer number",
         options: false
@@ -292,6 +312,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter anion count",
         path: "metadata.COUNANI",
+        alias: "counterAnions",
         type: "int",
         example: "any integer number",
         options: false
@@ -299,6 +320,7 @@ const QUERY_FIELDS = [
     {
         name: "Counter ion count",
         path: "metadata.COUNION",
+        alias: "counterIons",
         type: "int",
         example: "any integer number",
         options: false
@@ -306,6 +328,7 @@ const QUERY_FIELDS = [
     {
         name: "Non-counter ion count",
         path: "metadata.NOCNION",
+        alias: "nonCounterIons",
         type: "int",
         example: "any integer number",
         options: false
@@ -313,6 +336,7 @@ const QUERY_FIELDS = [
     {
         name: "Other atom count",
         path: "metadata.OTHRATS",
+        alias: "otherAtoms",
         type: "int",
         example: "any integer number",
         options: false
@@ -320,6 +344,7 @@ const QUERY_FIELDS = [
     {
         name: "Protein sequence",
         path: "metadata.PROTSEQ",
+        alias: "proteinSequence",
         type: "string",
         example: "VNLTTRT",
         options: false
@@ -327,6 +352,7 @@ const QUERY_FIELDS = [
     {
         name: "Nucleic acid sequences",
         path: "metadata.NUCLSEQ",
+        alias: "nucleicSequence",
         type: "string",
         example: "CGCGAATTCGCG",
         options: false
@@ -334,6 +360,7 @@ const QUERY_FIELDS = [
     {
         name: "Domains",
         path: "metadata.DOMAINS",
+        alias: "domain",
         type: "string",
         example: "Receptor-binding domain (RBD)",
         options: true
@@ -341,6 +368,7 @@ const QUERY_FIELDS = [
     {
         name: "Post translational modifications",
         path: "metadata.PTM",
+        alias: "ptm",
         type: "string",
         example: "Glycosylation",
         options: true
@@ -348,6 +376,7 @@ const QUERY_FIELDS = [
     {
         name: "Multimeric form",
         path: "metadata.MULTIMERIC",
+        alias: "multimeric",
         type: "string",
         example: "Dimer",
         options: true,
@@ -355,6 +384,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB id",
         path: "metadata.PDBIDS",
+        alias: "pdbId",
         type: "string",
         example: "12CA",
         options: true,
@@ -362,12 +392,14 @@ const QUERY_FIELDS = [
     {
         name: "PDB title",
         path: "references.pdbs.title",
+        alias: "pdbTitle",
         type: "string",
         example: "kinetics of human carbonic anhydrase",
     },
     {
         name: "PDB classification",
         path: "references.pdbs.class",
+        alias: "pdbClass",
         type: "string",
         example: "acid",
         options: true,
@@ -375,6 +407,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB authors",
         path: "references.pdbs.authors",
+        alias: "pdbAuthor",
         type: "string",
         example: "CHRISTIANSON",
         options: true,
@@ -382,6 +415,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB organism",
         path: "references.pdbs.organisms",
+        alias: "pdbOrganism",
         type: "string",
         example: "Homo sapiens",
         options: true,
@@ -389,6 +423,7 @@ const QUERY_FIELDS = [
     {
         name: "PDB method",
         path: "references.pdbs.method",
+        alias: "pdbMethod",
         type: "string",
         example: "X-RAY DIFFRACTION",
         options: true,
@@ -396,12 +431,14 @@ const QUERY_FIELDS = [
     {
         name: "PDB resolution",
         path: "references.pdbs.resolution",
+        alias: "pdbResolution",
         type: "float",
         example: "2.4",
     },
     {
         name: "Ligand name",
         path: "references.inchikeys.ligand.name",
+        alias: "ligandName",
         type: "string",
         example: "aclidinium",
         options: true,
@@ -409,6 +446,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand PubChem id",
         path: "references.inchikeys.ligand.pubchem",
+        alias: "ligandPubchem",
         type: "string",
         example: "1986",
         options: true,
@@ -416,6 +454,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand DrugBank id",
         path: "references.inchikeys.ligand.drugbank",
+        alias: "ligandDrugbank",
         type: "string",
         example: "DB09330",
         options: true,
@@ -423,6 +462,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand ChEMBL id",
         path: "references.inchikeys.ligand.chembl",
+        alias: "ligandChembl",
         type: "string",
         example: "CHEMBL14830",
         options: true,
@@ -430,6 +470,7 @@ const QUERY_FIELDS = [
     {
         name: "Ligand PDB code",
         path: "references.inchikeys.ligand.pdbid",
+        alias: "ligandPdbId",
         type: "string",
         example: "HEM",
         options: true,
@@ -437,6 +478,7 @@ const QUERY_FIELDS = [
     {
         name: "InChI key",
         path: "metadata.INCHIKEYS",
+        alias: "inchikey",
         type: "string",
         example: "HVYWMOMLDIMFJA-DPAQBDIFSA-N",
         options: true,
@@ -444,6 +486,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot id",
         path: "metadata.REFERENCES",
+        alias: "uniprotId",
         type: "string",
         example: "Q9BYF1",
         options: true
@@ -451,6 +494,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot organism",
         path: "references.proteins.organism",
+        alias: "uniprotOrganism",
         type: "string",
         example: "Homo sapiens",
         options: true
@@ -458,6 +502,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot gene",
         path: "references.proteins.gene",
+        alias: "uniprotGene",
         type: "string",
         example: "ACE2",
         options: true
@@ -465,6 +510,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot name",
         path: "references.proteins.name",
+        alias: "uniprotName",
         type: "string",
         example: "Angiotensin-converting enzyme 2",
         options: true
@@ -472,6 +518,7 @@ const QUERY_FIELDS = [
     {
         name: "Uniprot protein function",
         path: "references.proteins.functions",
+        alias: "uniprotFunction",
         type: "string",
         example: "RNA binding",
         options: true
@@ -479,6 +526,7 @@ const QUERY_FIELDS = [
     {
         name: "Program",
         path: "metadata.PROGRAM",
+        alias: "program",
         type: "string",
         example: "Gromacs",
         options: true,
@@ -486,6 +534,7 @@ const QUERY_FIELDS = [
     {
         name: "Type",
         path: "metadata.TYPE",
+        alias: "type",
         type: "string",
         example: "ensemble",
         options: true,
@@ -493,6 +542,7 @@ const QUERY_FIELDS = [
     {
         name: "MD method",
         path: "metadata.METHOD",
+        alias: "method",
         type: "string",
         example: "Classical MD",
         options: true,
@@ -500,6 +550,7 @@ const QUERY_FIELDS = [
     {
         name: "Timestep (fs)",
         path: "metadata.TIMESTEP",
+        alias: "timestep",
         type: "float",
         example: "2",
         options: true,
@@ -507,6 +558,7 @@ const QUERY_FIELDS = [
     {
         name: "Force field",
         path: "metadata.FF",
+        alias: "forcefield",
         type: "string",
         example: "CHARMM36m",
         options: true,
@@ -514,6 +566,7 @@ const QUERY_FIELDS = [
     {
         name: "Water type",
         path: "metadata.WAT",
+        alias: "water",
         type: "string",
         example: "TIP3",
         options: true,
@@ -521,6 +574,7 @@ const QUERY_FIELDS = [
     {
         name: "Temperature (K)",
         path: "metadata.TEMP",
+        alias: "temperature",
         type: "float",
         example: "300",
         options: true,
@@ -528,6 +582,7 @@ const QUERY_FIELDS = [
     {
         name: "Ensemble",
         path: "metadata.ENSEMBLE",
+        alias: "ensemble",
         type: "string",
         example: "NPT",
         options: true,
@@ -535,6 +590,7 @@ const QUERY_FIELDS = [
     {
         name: "Boxtype",
         path: "metadata.BOXTYPE",
+        alias: "box",
         type: "string",
         example: "Triclinic",
         options: true,
@@ -542,6 +598,7 @@ const QUERY_FIELDS = [
     {
         name: "Framestep (ns)",
         path: "metadata.FRAMESTEP",
+        alias: "framestep",
         type: "float",
         example: "any number",
         options: false
@@ -549,6 +606,7 @@ const QUERY_FIELDS = [
     {
         name: "Number of frames",
         path: "mds.frames",
+        alias: "frames",
         type: "int",
         example: "any integer number",
         options: false
@@ -556,6 +614,7 @@ const QUERY_FIELDS = [
     {
         name: "Chain names",
         path: "metadata.CHNAME",
+        alias: "chainName",
         type: "string",
         example: "M",
         options: true,
@@ -563,6 +622,7 @@ const QUERY_FIELDS = [
     {
         name: "Residue names",
         path: "metadata.RSNAME",
+        alias: "residueName",
         type: "string",
         example: "NME",
         options: true,
@@ -570,6 +630,7 @@ const QUERY_FIELDS = [
     {
         name: "Atom names",
         path: "metadata.ATNAME",
+        alias: "atomName",
         type: "string",
         example: "OT1",
         options: true,
@@ -577,6 +638,7 @@ const QUERY_FIELDS = [
     {
         name: "Atom elements",
         path: "metadata.ATELEM",
+        alias: "atomElement",
         type: "string",
         example: "Zn",
         options: true,
@@ -584,6 +646,7 @@ const QUERY_FIELDS = [
     {
         name: "Name",
         path: "metadata.NAME",
+        alias: "name",
         type: "string",
         example: "spike opening ...",
         options: false
@@ -591,6 +654,7 @@ const QUERY_FIELDS = [
     {
         name: "Description",
         path: "metadata.DESCRIPTION",
+        alias: "description",
         type: "string",
         example: "this simulation ...",
         options: false
@@ -598,6 +662,7 @@ const QUERY_FIELDS = [
     {
         name: "Authors",
         path: "metadata.AUTHORS",
+        alias: "author",
         type: "string",
         example: "Modesto Orozco",
         options: true,
@@ -605,6 +670,7 @@ const QUERY_FIELDS = [
     {
         name: "Groups",
         path: "metadata.GROUPS",
+        alias: "group",
         type: "string",
         example: "IRB Barcelona, Orozco lab",
         options: true,
@@ -612,6 +678,7 @@ const QUERY_FIELDS = [
     {
         name: "Citation",
         path: "metadata.CITATION",
+        alias: "citation",
         type: "string",
         example: "institute of ...",
         options: false
@@ -619,6 +686,7 @@ const QUERY_FIELDS = [
     {
         name: "Collections",
         path: "metadata.COLLECTIONS",
+        alias: "collection",
         type: "string",
         example: "cv19",
         options: true,
@@ -626,6 +694,7 @@ const QUERY_FIELDS = [
     {
         name: "Published",
         path: "published",
+        alias: "published",
         type: "boolean",
         example: "true",
         options: true,
@@ -633,6 +702,7 @@ const QUERY_FIELDS = [
     {
         name: "Posited",
         path: "posited",
+        alias: "posited",
         type: "boolean",
         example: "true",
         options: true,
@@ -641,6 +711,7 @@ const QUERY_FIELDS = [
     {
         name: "Source node",
         path: "node",
+        alias: "node",
         type: "string",
         example: "mmb",
         options: true,
@@ -649,6 +720,7 @@ const QUERY_FIELDS = [
     {
         name: "Available MD analyses",
         path: "mds.analyses.name",
+        alias: "analysis",
         type: "string",
         example: "pca",
         options: true,
@@ -656,6 +728,7 @@ const QUERY_FIELDS = [
     {
         name: "Project files",
         path: "files.name",
+        alias: "file",
         type: "string",
         example: "topology.tpr",
         options: true
@@ -663,6 +736,7 @@ const QUERY_FIELDS = [
     {
         name: "MD files",
         path: "mds.files.name",
+        alias: "mdFile",
         type: "string",
         example: "pocket_10.pdb",
         options: true
@@ -670,6 +744,7 @@ const QUERY_FIELDS = [
     {
         name: "Number of MDs",
         path: "mdcount",
+        alias: "mdCount",
         type: "int",
         example: "any integer number",
         options: false
@@ -677,6 +752,7 @@ const QUERY_FIELDS = [
     {
         name: "Last update date",
         path: "updateDate",
+        alias: "updated",
         type: "date",
         example: "ISODate('2026-02-04T10:57:00.988Z')",
         options: false
@@ -684,6 +760,7 @@ const QUERY_FIELDS = [
     {
         name: "Creation date",
         path: "creationDate",
+        alias: "created",
         type: "date",
         example: "ISODate('2026-02-04T10:57:00.988Z')",
         options: false
@@ -691,6 +768,15 @@ const QUERY_FIELDS = [
 ];
 // Store the same query field configurations in a object where paths are the keys for comodity
 const PATH_QUERY_FIELDS = Object.fromEntries(QUERY_FIELDS.map(q => [q.path, q]));
+// Store the same query field configurations in a object where aliases are the keys
+const ALIAS_QUERY_FIELDS = {};
+QUERY_FIELDS.forEach(q => {
+    if (!q.alias) throw new Error(`Query field "${q.name}" has no alias`);
+    if (q.alias in ALIAS_QUERY_FIELDS) throw new Error(`Duplicated query field alias "${q.alias}"`);
+    if (q.alias in PATH_QUERY_FIELDS && q.alias !== q.path)
+        throw new Error(`Query field alias "${q.alias}" matches the path of a different field`);
+    ALIAS_QUERY_FIELDS[q.alias] = q;
+});
 // Get the path of every field with "options = true" together
 // Get all fields for the monitor and all fields but the "global = true" for the loader
 const queryFieldsWithOptions = QUERY_FIELDS.filter(qf => qf.options);
@@ -716,6 +802,7 @@ module.exports = {
     // Export query fields
     QUERY_FIELDS,
     PATH_QUERY_FIELDS,
+    ALIAS_QUERY_FIELDS,
     OPTIONS_QUERY_FIELDS,
     LOCAL_OPTIONS_QUERY_FIELDS,
     // Standard filenames
