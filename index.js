@@ -122,7 +122,15 @@ class Database {
             }
             console.log(`🛠️  Setting up ${collectionKey} collection`);
             // Create the collection
-            await this.db.createCollection(collectionConfig.name);
+            // Note that another process (e.g. another loader) may be setting up the database at the same time
+            // If so, the collection may have been created after we listed the current collections
+            try {
+                await this.db.createCollection(collectionConfig.name);
+            } catch (error) {
+                // If the collection already exists then it is fine and we still set its indices
+                // Error code 48 stands for 'NamespaceExists'
+                if (error.code !== 48) throw error;
+            }
             // Set some indices if specified to accelerate specific queries
             if (collectionConfig.indexes) {
                 for await (const index of collectionConfig.indexes) {
@@ -131,19 +139,24 @@ class Database {
             }
         }
         // Make sure there is a counter document to track the last issued accession
-        const accessionsCounter = await this.counters.findOne({ accessions: true });
-        // If the counter does not exist yet then create it
-        if (!accessionsCounter) {
-            // Set the "zero" count for the counter
-            // Note that this is not zero since we want the first issued accession to star with 'A'
-            const zeroCount = parseInt(FIRST_ACCESSION_CODE, ALPHANUMERIC) - 1;
-            // Set the counter document
-            const counter = { accessions: true, last: zeroCount };
-            // Insert the new document
-            console.log(`🛠️  Creating new accession counter`);
-            const result = await this.counters.insertOne(counter);
-            if (!result.acknowledged) console.log(`🛠️  Failed to create new accession counter`);
-            console.log('🛠️  Created new accession counter');
+        // Set the "zero" count for the counter
+        // Note that this is not zero since we want the first issued accession to star with 'A'
+        const zeroCount = parseInt(FIRST_ACCESSION_CODE, ALPHANUMERIC) - 1;
+        // Create the counter only if it does not exist yet, in a single operation
+        // Note that another process may be setting up the database at the same time
+        // The upsert alone does not prevent both processes from inserting a counter
+        // For this reason new counters get a fixed id, so mongo rejects the second one
+        // Counters created before this fix keep their random id, but they are found anyway
+        try {
+            const result = await this.counters.updateOne(
+                { accessions: true },
+                { $setOnInsert: { _id: 'accessions', last: zeroCount } },
+                { upsert: true });
+            if (result.upsertedCount > 0) console.log('🛠️  Created new accession counter');
+        } catch (error) {
+            // If another process has just created the counter then it is fine
+            // Error code 11000 stands for 'DuplicateKey'
+            if (error.code !== 11000) throw error;
         }
     };
 
