@@ -9,6 +9,7 @@ const {
     LOCAL_COLLECTIONS,
     GLOBAL_COLLECTIONS,
     REFERENCES,
+    REFERENCE_HEADER,
     QUERY_FIELDS,
     PATH_QUERY_FIELDS,
     ALIAS_QUERY_FIELDS,
@@ -23,6 +24,14 @@ const {
 
 // Import auxiliar functions
 const { areObjectsIdentical } = require('./utils/auxiliar');
+
+// Import the filter parsers
+const {
+    BAD_REQUEST,
+    parseFilters,
+    getConditionQuery,
+    joinConditionQueries,
+} = require('./utils/query-fields');
 
 // Import additional functions
 const countOptions = require('./utils/count-options');
@@ -170,6 +179,57 @@ class Database {
         // Return all filters together, including also the publsihed filter
         return { ...baseFilter, ...bookedFilter, ...deletedFilter };
     };
+
+    // Translate the 'filter' argument into a list of mongo queries for the projects collection
+    // Every filter is a list of conditions, which are joined in a single query matched if any condition matches
+    // Conditions on reference fields (e.g. 'references.proteins.organism') query the references collection first
+    // Then they are replaced by a query on the corresponding project field (e.g. 'metadata.REFERENCES')
+    // Returns an error response if something is wrong
+    processProjectsFilter = async filter => {
+        const parsedFilters = parseFilters(filter);
+        if (parsedFilters.error) return parsedFilters;
+        const queries = [];
+        for (const conditions of parsedFilters) {
+            const conditionQueries = [];
+            for (const parsedCondition of conditions) {
+                const conditionQuery = await this.processProjectsCondition(parsedCondition);
+                if (conditionQuery.error) return conditionQuery;
+                conditionQueries.push(conditionQuery);
+            }
+            queries.push(joinConditionQueries(conditionQueries));
+        }
+        return queries;
+    }
+
+    // Translate a parsed filter condition into a mongo query for the projects collection
+    processProjectsCondition = async parsedCondition => {
+        const { path, condition, negated } = parsedCondition;
+        // If the field does not start with the references header then use it as is
+        if (!path.startsWith(REFERENCE_HEADER)) return getConditionQuery(parsedCondition);
+        // Get the name of the reference collection and the field inside the reference
+        // Note that the reference field may be nested (e.g. 'references.inchikeys.ligand.name')
+        const fieldSplits = path.split('.');
+        const referenceName = fieldSplits[1];
+        const referenceField = fieldSplits.slice(2).join('.');
+        // Get the reference configuration
+        const reference = this.REFERENCES[referenceName];
+        if (!reference || !referenceField) return {
+            headerError: BAD_REQUEST,
+            error: `Unknown reference field "${path}". Available references: ${this.AVAILABLE_REFERENCES}`
+        };
+        // Find the ids of references matching the condition
+        // Negated conditions find the references matching the positive condition and then exclude their projects
+        // Thus projects without any reference matching the condition are returned, as with any other field
+        const referenceIds = await this[reference.collectionName]
+            .find({ [referenceField]: condition })
+            .project({ _id: false, [reference.idField]: true })
+            .map(ref => ref[reference.idField])
+            .toArray();
+        // DANI: Although we could return a not found error here if results is empty we don't
+        // DANI: Thus the final response is an empty list and we are coherent
+        // DANI: Otherwise every service using this endpoint should learn to handle the error
+        return { [reference.projectIdsField]: { [negated ? '$nin' : '$in']: referenceIds } };
+    }
 
     // Add additional functions
     countOptions = (query, fields, shouldCountMds, useSavedCounts) =>

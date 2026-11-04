@@ -127,6 +127,10 @@ const GLOBAL_COLLECTIONS = {
 // Configuration for local and global collections should be identical
 // The 'idField' is the field inside every reference document which stores the reference id
 // The 'projectIdsField' is the field inside project documents with a list of reference ids related to the project
+// Set the header of query field paths which are not in the project but in a references collection
+// e.g. 'references.proteins.organism' is the 'organism' field in the proteins references collection
+const REFERENCE_HEADER = 'references.';
+
 const REFERENCES = {
     proteins: {
         collectionName: 'uniprot_refs',
@@ -895,6 +899,7 @@ module.exports = {
     GLOBAL_COLLECTIONS,
     // Export references
     REFERENCES,
+    REFERENCE_HEADER,
     // Export query fields
     QUERY_FIELDS,
     PATH_QUERY_FIELDS,
