@@ -30,6 +30,13 @@ const countOptions = async (database, query, fields, shouldCountMds, useSavedCou
     // Set the options object to be returned
     // Then all mined data will be written into it
     const options = {};
+    // Objects can not be told apart as values, so keep the fields with objects and their keys to ask for one of them
+    const objectFields = {};
+    const isObject = value => value !== null && typeof value === 'object';
+    const keepObjectKeys = (field, object) => {
+        if (!objectFields[field]) objectFields[field] = new Set();
+        Object.keys(object).forEach(key => objectFields[field].add(key));
+    };
     // First of all check if we have already counted values for the requested query
     if (useSavedCounts) {
         // Note that the values for these fields have the dots replaced by '/' characters
@@ -189,6 +196,7 @@ const countOptions = async (database, query, fields, shouldCountMds, useSavedCou
                         return;
                     }
                     }
+                    if (isObject(value)) return keepObjectKeys(`${REFERENCE_HEADER}${referenceName}.${field}`, value);
                     // If the value is a string then make it lower caps
                     // This way we avoid having duplicated values because of different capitalizatioin
                     // This is quiet common in PDB annotations (organism, method, etc.)
@@ -259,6 +267,7 @@ const countOptions = async (database, query, fields, shouldCountMds, useSavedCou
                         return;
                     }
                 }
+                if (isObject(value)) return keepObjectKeys(field, value);
                 // Get the set of projects with the current value and update it
                 const currentValueProjects = values[value];
                 if (currentValueProjects) currentValueProjects.add(projectId);
@@ -280,6 +289,13 @@ const countOptions = async (database, query, fields, shouldCountMds, useSavedCou
             options[field] = counts;
         });
     }
+    // If any field holds objects then ask for one of their fields instead
+    const [objectField, objectKeys] = Object.entries(objectFields)[0] || [];
+    if (objectField) return {
+        code: '400',
+        error: `${objectField} holds objects, so count one of their fields instead: ` +
+            [...objectKeys].map(key => `${objectField}.${key}`).join(', ')
+    };
     // Send all mined data while we apply the last fixes
     return lastFixes(options);
 }
