@@ -985,6 +985,9 @@ module.exports = {
     STANDARD_TRAJECTORY_FILENAME: 'trajectory.bin',
     STANDARD_STRUCTURE_FILENAME: 'structure.pdb',
     STANDARD_BOX_FILENAME: 'box.bin',
+    // Essential files every MD must have to be federated
+    // Each essential file is a list of alternative filenames, any of them is enough
+    ESSENTIAL_FILES: [ [ 'structure.pdb', 'structure.cif' ], [ 'trajectory.bin' ] ],
     // Export constants related to issuing new accessions
     FIRST_ACCESSION_CODE,
     ACCESSION_CHARACTERS_LIMIT,
